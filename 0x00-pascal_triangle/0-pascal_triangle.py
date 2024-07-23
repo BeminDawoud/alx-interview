@@ -2,7 +2,6 @@
 """
 Pascal Triangle
 """
-
 from math import factorial
 
 
