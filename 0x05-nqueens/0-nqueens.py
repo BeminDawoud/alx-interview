@@ -1,84 +1,64 @@
-#!/usr/bin/python3
-"""N queens solution finder module.
-"""
 import sys
 
 
-solutions = []
+def is_safe(board, row, col, N):
+    """
+    Check if it's safe to place a queen at board[row][col].
+    """
+    # Check the same column
+    for i in range(row):
+        if board[i] == col:
+            return False
 
-n = 0
+    # Check the diagonals
+    for i in range(row):
+        if abs(board[i] - col) == abs(i - row):
+            return False
 
-pos = None
+    return True
 
 
-def get_input():
-    """Retrieves and validates this program's argument."""
-    global n
-    n = 0
+def solve_nqueens(N, row, board, solutions):
+    """
+    solve the N queens problem by trying to place a queen in each row.
+    """
+    if row == N:
+        solutions.append([[i, board[i]] for i in range(N)])
+        return
+
+    for col in range(N):
+        if is_safe(board, row, col, N):
+            board[row] = col
+            solve_nqueens(N, row + 1, board, solutions)
+            board[row] = -1
+
+
+def main():
+    """
+    handle input validation and initiate the N queens solution process.
+    """
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
         sys.exit(1)
+
     try:
-        n = int(sys.argv[1])
-    except Exception:
+        N = int(sys.argv[1])
+    except ValueError:
         print("N must be a number")
         sys.exit(1)
-    if n < 4:
+
+    if N < 4:
         print("N must be at least 4")
         sys.exit(1)
-    return n
+
+    board = [-1] * N
+    solutions = []
+
+    solve_nqueens(N, 0, board, solutions)
+
+    for solution in solutions:
+        print(solution)
 
 
-def is_attacking(pos0, pos1):
-    """Checks if the positions of two queens are in an attacking mode."""
-    if (pos0[0] == pos1[0]) or (pos0[1] == pos1[1]):
-        return True
-    return abs(pos0[0] - pos1[0]) == abs(pos0[1] - pos1[1])
-
-
-def group_exists(group):
-    """Checks if a group exists in the list of solutions."""
-    global solutions
-    for stn in solutions:
-        i = 0
-        for stn_pos in stn:
-            for grp_pos in group:
-                if stn_pos[0] == grp_pos[0] and stn_pos[1] == grp_pos[1]:
-                    i += 1
-        if i == n:
-            return True
-    return False
-
-
-def build_solution(row, group):
-    """Builds a solution for the problem."""
-    global solutions
-    global n
-    if row == n:
-        tmp0 = group.copy()
-        if not group_exists(tmp0):
-            solutions.append(tmp0)
-    else:
-        for col in range(n):
-            a = (row * n) + col
-            matches = zip(list([pos[a]]) * len(group), group)
-            used_positions = map(lambda x: is_attacking(x[0], x[1]), matches)
-            group.append(pos[a].copy())
-            if not any(used_positions):
-                build_solution(row + 1, group)
-            group.pop(len(group) - 1)
-
-
-def get_solutions():
-    """Gets the solutions."""
-    global pos, n
-    pos = list(map(lambda x: [x // n, x % n], range(n**2)))
-    a = 0
-    group = []
-    build_solution(a, group)
-
-
-n = get_input()
-get_solutions()
-for solution in solutions:
-    print(solution)
+if __name__ == "__main__":
+    main()
