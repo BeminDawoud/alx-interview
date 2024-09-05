@@ -18,11 +18,11 @@ request(
     if (error) {
       console.error('Error:', error);
     }
-    data = JSON.parse(body);
-    characters = data.characters;
-    characters.forEach(async function (character) {
+    const data = JSON.parse(body);
+    const characters = data.characters;
+    characters.forEach(async function (character, index) {
       const person = await makeRequest(character);
-      console.log(person.name);
+      console.log(`${index}-${person.name}`);
     });
   }
 );
