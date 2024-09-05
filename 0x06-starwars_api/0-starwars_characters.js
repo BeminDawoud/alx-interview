@@ -1,6 +1,7 @@
 #!/usr/bin/node
 const request = require('request');
 const id = process.argv[2];
+const url = `https://swapi-api.alx-tools.com/api/films/${id}`;
 
 function makeRequest (url) {
   return new Promise((resolve, reject) => {
@@ -13,17 +14,13 @@ function makeRequest (url) {
   });
 }
 
-request(
-  `https://swapi-api.alx-tools.com/api/films/${id}`,
-  (error, response, body) => {
-    if (error) {
-      console.error('Error:', error);
-    }
-    const data = JSON.parse(body);
-    const characters = data.characters;
-    characters.forEach(async function (character, index) {
-      const person = await makeRequest(character);
-      console.log(`${index}-${person.name}`);
-    });
+async function printCharacters () {
+  const data = await makeRequest(url);
+  const characters = data.characters;
+  for (let i = 0; i < characters.length; i++) {
+    const character = characters[i];
+    const person = await makeRequest(character);
+    console.log(person.name);
   }
-);
+}
+printCharacters();
