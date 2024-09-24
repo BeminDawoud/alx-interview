@@ -3,7 +3,7 @@
 """
 
 
-def island_perimeter(grid: list[list]) -> int:
+def island_perimeter(grid):
     """Calculating Grid Perimeter"""
     perimeter = 0
     for i in range(len(grid)):
